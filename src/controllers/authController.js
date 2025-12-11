@@ -51,9 +51,9 @@ const login = async (req, res) => {
   });
 
   // if no user found
-  if (!user) {
+  if (!userExist) {
     return res.status(400).json({ error: "Invalid email or password" });
   }
 };
 
-module.exports = register;
+module.exports = { register, login };
