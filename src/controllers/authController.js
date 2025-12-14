@@ -52,8 +52,26 @@ const login = async (req, res) => {
 
   // if no user found
   if (!userExist) {
-    return res.status(400).json({ error: "Invalid email or password" });
+    return res.status(401).json({ error: "Invalid email or password" });
   }
+
+  // verify password
+  const isPasswordValid = await bcrypt.compare(password, userExist.password);
+
+  if (!isPasswordValid) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "User login successfully",
+    data: {
+      user: {
+        id: userExist.id,
+        email: email,
+      },
+    },
+  });
 };
 
 module.exports = { register, login };
