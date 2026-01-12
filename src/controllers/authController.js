@@ -1,5 +1,6 @@
 const { prisma } = require("../config/db");
 const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/generateToken");
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -14,6 +15,9 @@ const register = async (req, res) => {
       error: "User already exist with this email",
     });
   }
+
+  // generate a token
+  const token = generateToken(userExist.id, res);
 
   //   hash password
   const salt = await bcrypt.genSalt(10);
@@ -36,6 +40,7 @@ const register = async (req, res) => {
         name: name,
         email: email,
       },
+      token,
     },
   });
 };
@@ -62,6 +67,9 @@ const login = async (req, res) => {
     return res.status(401).json({ error: "Invalid email or password" });
   }
 
+  // generate a token
+  const token = generateToken(userExist.id, res);
+
   res.status(200).json({
     status: "success",
     message: "User login successfully",
@@ -70,8 +78,16 @@ const login = async (req, res) => {
         id: userExist.id,
         email: email,
       },
+      token,
     },
   });
 };
 
-module.exports = { register, login };
+const logout = async (req, res) => {
+  res.cookie("jwt", "", { maxAge: 1 });
+  res
+    .status(200)
+    .json({ status: "success", message: "User logout successfully" });
+};
+
+module.exports = { register, login, logout };
