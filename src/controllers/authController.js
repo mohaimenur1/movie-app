@@ -17,7 +17,7 @@ const register = async (req, res) => {
   }
 
   // generate a token
-  const token = generateToken(userExist.id, res);
+  // const token = generateToken(userExist.id, res);
 
   //   hash password
   const salt = await bcrypt.genSalt(10);
@@ -40,7 +40,7 @@ const register = async (req, res) => {
         name: name,
         email: email,
       },
-      token,
+      // token,
     },
   });
 };
